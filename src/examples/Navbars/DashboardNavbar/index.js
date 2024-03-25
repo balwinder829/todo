@@ -107,6 +107,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
   };
 
   const handleMenuClose = (str) => {
+   
+    setAnchorEl(null);
+  };
+  const logOut = (str) => {
     if(str){
       Dispatch(setUser("{}"));
       Dispatch(incrementByAmount(""));
@@ -164,7 +168,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <MenuItem onClick={handleMenuClose}>
                   <Link to="/profile">Profile</Link>
                 </MenuItem>
-                <MenuItem onClick={()=>handleMenuClose("logout")}>Logout</MenuItem>
+                <MenuItem onClick={()=>{logOut("logout")}}>Logout</MenuItem>
               </Menu>
 
               <IconButton

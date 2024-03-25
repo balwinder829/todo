@@ -154,7 +154,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
             <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
+              {"To Do"}
             </MDTypography>
           </MDBox>
         </MDBox>

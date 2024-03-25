@@ -25,11 +25,20 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { useDispatch, useSelector } from "react-redux";
+import MDButton from "components/MDButton";
+import ExportApi from "API/ExportApi";
+import { setUser } from "qpp/counterSlice";
+import { incrementByAmount } from "qpp/counterSlice";
+import MDSnackbar from "components/MDSnackbar";
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
-
+  const token = useSelector((state) => state.token)
+  const [infoSB, setInfoSB] = useState(false);
+  const openInfoSB = () => setInfoSB(true);
+  const closeInfoSB = () => setInfoSB(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -43,58 +52,60 @@ function Dashboard() {
   const handleClose1 = () => {
     setOpen1(false);
   };
+  const Dispatch =useDispatch()
   const [successSB, setSuccessSB] = React.useState(false);
   const [errorSB, setErrorSB] = React.useState(false);
   const openErrorSB = () => setErrorSB(true);
   const closeErrorSB = () => setErrorSB(false);
   const formik = useFormik({
     initialValues: {
-      Description: "",
-      Tag: "",
-      Titel: "",
-      WorkDay: "",
-      module: "",
-      Status: "",
+      description: "",
+      tags: "",
+      title: "",
+      action_date: "",
+      // Status: "",
     },
     validationSchema: Yup.object({
-      Description: Yup.string().required("Enter your description"),
-      WorkDay: Yup.string().required("Please select your work day"),
-      Titel: Yup.string().required("Enter your To Do Titel"),
-      Tag: Yup.string().required("Please select your  Tag"),
-      Status: Yup.string().required("Please select your  Status"),
+      description: Yup.string().required("Enter your description"),
+      action_date: Yup.string().required("Please select your work day"),
+      title: Yup.string().required("Enter your To Do Title"),
+      tags: Yup.string().required("Please select your  Tag"),
+      // Status: Yup.string().required("Please select your  Status"),
     }),
-    onSubmit: (values) => {
-      // ExportApi.Register(values.email, values.Description, values.Titel,values.WorkDay,values.mobile)
-      //   .then((resp) => {
-      //     if (resp.data) {
-      //       console.log(resp.data)
-      //       // if (resp.data.code == 200) {
-      //       //   localStorage.removeItem('showPage')
-      //       //   toast.success(resp.data.message, {
-      //       //     position: "top-right",
-      //       //     autoClose: 5000,
-      //       //     hideProgressBar: false,
-      //       //     closeOnClick: true,
-      //       //     pauseOnHover: true,
-      //       //     draggable: true,
-      //       //     progress: undefined,
-      //       //     });
-      //       // } else {
-      //       //   toast.error(resp.data.message, {
-      //       //     position: "top-right",
-      //       //     autoClose: 5000,
-      //       //     hideProgressBar: false,
-      //       //     closeOnClick: true,
-      //       //     pauseOnHover: true,
-      //       //     draggable: true,
-      //       //     progress: undefined,
-      //       //     });
-      //       // }
-      //     }
-      //   })
-      //   .catch((err) => console.log(err));
+    onSubmit: (values,{ resetForm }) => {
+      ExportApi.CreatedToDo(values,token)
+        .then((resp) => {
+          if (resp.data) {
+            console.log(resp.data)
+            if (resp.data.status == "Token is Expired") {
+              Dispatch(setUser("{}"));
+              Dispatch(incrementByAmount(""));
+          }
+            if (resp.data.message == "Todo added successfully") {
+               resetForm() 
+               openInfoSB()
+               setInfoSB(true)
+               handleClose()
+        }
+          
+          }
+        })
+        .catch((err) => console.log(err));
     },
   });
+  const renderInfoSB = (
+    <MDSnackbar
+      bgWhite
+      title="Todo added successfully"
+      content=""
+      color="success"
+      icon="check"
+      dateTime=""
+      open={infoSB}
+      onClose={closeInfoSB}
+      close={closeInfoSB}
+    />
+  );
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -106,7 +117,7 @@ function Dashboard() {
                 onClick={handleClickOpen}
                 color="dark"
                 icon="weekend"
-                title="create ToDo"
+                title="Create To Do"
                 count={"To Do"}
                 percentage={{
                   color: "success",
@@ -148,7 +159,7 @@ function Dashboard() {
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <ComplexStatisticsCard
+              {/* <ComplexStatisticsCard
                 color="primary"
                 icon="person_add"
                 title="Followers"
@@ -158,7 +169,7 @@ function Dashboard() {
                   amount: "",
                   label: "Just updated",
                 }}
-              />
+              /> */}
             </MDBox>
           </Grid>
         </Grid>
@@ -234,10 +245,10 @@ function Dashboard() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose1}>Disagree</Button>
-            <Button onClick={handleClose1} autoFocus>
+            <Button onClick={handleClose1}>Close</Button>
+            {/* <Button onClick={handleClose1} autoFocus>
               Done
-            </Button>
+            </Button> */}
           </DialogActions>
         </Dialog>
         <Dialog
@@ -249,37 +260,37 @@ function Dashboard() {
           <DialogTitle className="min-w-96" id="alert-dialog-title">
             {"what is your plan today ?"}
           </DialogTitle>
-          <form className="p-3" onSubmit={formik.handleSubmit}>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
+              <form onSubmit={formik.handleSubmit}>
                 <MDBox>
                   <MDBox mb={2}>
                     <MDInput
                       type="text"
-                      name="Titel"
+                      name="title"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.Titel}
-                      label="Titel"
+                      value={formik.values.title}
+                      label="Title"
                       fullWidth
                     />
-                    {formik.touched.Titel && formik.errors.Titel ? (
-                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.Titel}</div>
+                    {formik.touched.title && formik.errors.title ? (
+                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.title}</div>
                     ) : null}
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      name="WorkDay"
+                      name="action_date"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.WorkDay}
+                      value={formik.values.action_date}
                       plaseholder="kk"
                       type="date"
                       label="Work Day"
                       fullWidth
                     />
-                    {formik.touched.WorkDay && formik.errors.WorkDay ? (
-                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.WorkDay}</div>
+                    {formik.touched.action_date && formik.errors.action_date ? (
+                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.action_date}</div>
                     ) : null}
                   </MDBox>
 
@@ -288,19 +299,20 @@ function Dashboard() {
                       type="textarea"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.Description}
-                      name="Description"
+                      value={formik.values.description}
+                      name="description"
                       label="Description"
+                      row={5}
                       fullWidth
                     />
-                    {formik.touched.Description && formik.errors.Description ? (
+                    {formik.touched.description && formik.errors.description ? (
                       <div style={{ color: "red", fontSize: "15px" }}>
-                        {formik.errors.Description}
+                        {formik.errors.description}
                       </div>
                     ) : null}
                   </MDBox>
                   <MDBox mb={2}>
-                    <FormControl sx={{ m: 1, minWidth: 120 }} fullWidth>
+                    <FormControl  fullWidth>
                       <InputLabel id="demo-simple-select-label">Tag</InputLabel>
                       <Select
                       sx={{height:45 }}
@@ -308,24 +320,23 @@ function Dashboard() {
                         id="demo-simple-select"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.Tag}
+                        value={formik.values.tags}
+                        name={"tags"}
                         label="Tag"
                       >
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
-                        <MenuItem value={"created"}>created </MenuItem>
-                        <MenuItem value={"Padding"}>Padding</MenuItem>
-                        <MenuItem value={"daily routine"}>padding</MenuItem>
+                        <MenuItem value={"daily routine"}>Daily routine</MenuItem>
                         <MenuItem value={"wedding"}>Wedding</MenuItem>
                         <MenuItem value={"shoping"}>Shoping</MenuItem>
                       </Select>
                     </FormControl>
-                    {formik.touched.Tag && formik.errors.Tag ? (
-                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.Tag}</div>
+                    {formik.touched.tags && formik.errors.tags ? (
+                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.tags}</div>
                     ) : null}
                   </MDBox>
-                  <MDBox mb={2}>
+                  {/* <MDBox mb={2}>
                     <FormControl fullWidth sx={{ m: 1, minWidth: 120 }}>
                       <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
                       <Select
@@ -348,19 +359,23 @@ function Dashboard() {
                     {formik.touched.Status && formik.errors.Status ? (
                       <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.Status}</div>
                     ) : null}
-                  </MDBox>
+                  </MDBox> */}
                 </MDBox>
+              <Button onClick={handleClose}>Cancel</Button>
+              <MDButton type="submit"   >
+              Create TODO
+              </MDButton>
+              {/* <Button type="submit" onClick={formik.handleSubmit} autoFocus>
+                Create TODO
+              </Button> */}
+          </form>
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Cansel</Button>
-              <Button type="submit" autoFocus>
-                Create TODO
-              </Button>
             </DialogActions>
-          </form>
         </Dialog>
       </React.Fragment>
+      {renderInfoSB}
     </DashboardLayout>
   );
 }

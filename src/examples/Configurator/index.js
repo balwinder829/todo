@@ -125,7 +125,7 @@ function Configurator() {
         px={3}
       >
         <MDBox>
-          <MDTypography variant="h5">Material UI Configurator</MDTypography>
+          <MDTypography variant="h5">Change display seting</MDTypography>
           <MDTypography variant="body2" color="text">
             See our dashboard options.
           </MDTypography>
@@ -273,11 +273,11 @@ function Configurator() {
         </MDBox>
         <Divider />
      
-        <MDBox mt={2} textAlign="center">
+        {/* <MDBox mt={2} textAlign="center">
           <MDBox mb={0.5}>
             <MDTypography variant="h6">Thank you for sharing!</MDTypography>
           </MDBox>
-        </MDBox>
+        </MDBox> */}
       </MDBox>
     </ConfiguratorRoot>
   );

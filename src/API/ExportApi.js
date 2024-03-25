@@ -6,6 +6,14 @@ const Register = (email, password,first_name,last_name,mobile) =>
   BaseApi.post("register", { email: email, password: password,mobile:mobile,last_name:last_name,first_name:first_name },{
     headers: {
       'Content-Type': 'application/json',
+      
+    }
+  });
+const CreatedToDo = (obj,token) =>
+  BaseApi.post("todo/add", obj,{
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " +token
     }
   });
 const UserForgot = (email) => BaseApi.post("forgot-password", { email: email });
@@ -82,6 +90,7 @@ const GetCountryData = () =>
 export default {
   UserLogin,
   Register,
+  CreatedToDo,
   UserForgot,
   UserForgotResetPasswordPost,
   ResetPasswordPost,

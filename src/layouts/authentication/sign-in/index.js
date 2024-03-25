@@ -42,7 +42,6 @@ function Basic() {
       ExportApi.UserLogin(values.email,values.password)
         .then((resp) => {
           if (resp.data) {
-            console.log(resp)
             if (resp.data.success == false) {
               setErrorSB(true)
             } else {
