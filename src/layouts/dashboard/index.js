@@ -113,7 +113,7 @@ function Dashboard() {
                   amount: "+55%",
                   label: "than lask week",
                 }}
-                />
+              />
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
@@ -222,22 +222,23 @@ function Dashboard() {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{" Your today plan list"}</DialogTitle>
+          <DialogTitle className="min-w-96" id="alert-dialog-title">
+            {" Your today plan list"}
+          </DialogTitle>
 
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
               <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose1}>Disagree</Button>
-              <Button onClick={handleClose1} autoFocus>
-                Done
-              </Button>
-            </DialogActions>
-
+                <OrdersOverview />
+              </Grid>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose1}>Disagree</Button>
+            <Button onClick={handleClose1} autoFocus>
+              Done
+            </Button>
+          </DialogActions>
         </Dialog>
         <Dialog
           open={open}
@@ -245,7 +246,9 @@ function Dashboard() {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"what is your plan today ?"}</DialogTitle>
+          <DialogTitle className="min-w-96" id="alert-dialog-title">
+            {"what is your plan today ?"}
+          </DialogTitle>
           <form className="p-3" onSubmit={formik.handleSubmit}>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
@@ -258,7 +261,6 @@ function Dashboard() {
                       onBlur={formik.handleBlur}
                       value={formik.values.Titel}
                       label="Titel"
-                      variant="standard"
                       fullWidth
                     />
                     {formik.touched.Titel && formik.errors.Titel ? (
@@ -274,42 +276,13 @@ function Dashboard() {
                       plaseholder="kk"
                       type="date"
                       label="Work Day"
-                      variant="standard"
                       fullWidth
                     />
                     {formik.touched.WorkDay && formik.errors.WorkDay ? (
                       <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.WorkDay}</div>
                     ) : null}
                   </MDBox>
-                  <MDBox mb={2}>
-                    <MDInput
-                      type="number"
-                      name="mobile"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.mobile}
-                      label="Mobile Number"
-                      variant="standard"
-                      fullWidth
-                    />
-                    {formik.touched.mobile && formik.errors.mobile ? (
-                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.mobile}</div>
-                    ) : null}
-                  </MDBox>
-                  <MDBox mb={2}>
-                    <MDInput
-                      name="email"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.email}
-                      type="email"
-                      label="Email"
-                      fullWidth
-                    />
-                    {formik.touched.email && formik.errors.email ? (
-                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.email}</div>
-                    ) : null}
-                  </MDBox>
+
                   <MDBox mb={2}>
                     <MDInput
                       type="textarea"
@@ -327,11 +300,12 @@ function Dashboard() {
                     ) : null}
                   </MDBox>
                   <MDBox mb={2}>
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                      <InputLabel id="demo-simple-select-standard-label">Tag</InputLabel>
+                    <FormControl sx={{ m: 1, minWidth: 120 }} fullWidth>
+                      <InputLabel id="demo-simple-select-label">Tag</InputLabel>
                       <Select
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
+                      sx={{height:45 }}
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.Tag}
@@ -352,11 +326,12 @@ function Dashboard() {
                     ) : null}
                   </MDBox>
                   <MDBox mb={2}>
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }}>
                       <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
                       <Select
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
+                       sx={{height:45 }}
+                       labelId="demo-simple-select-label"
+                       id="demo-simple-select"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.Status}
@@ -378,9 +353,9 @@ function Dashboard() {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={handleClose}>Cansel</Button>
               <Button type="submit" autoFocus>
-                Agree
+                Create TODO
               </Button>
             </DialogActions>
           </form>

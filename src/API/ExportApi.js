@@ -3,7 +3,11 @@ import { BaseApi } from "./BaseApi";
 const UserLogin = (email, password) =>
   BaseApi.post("login", { email: email, password: password });
 const Register = (email, password,first_name,last_name,mobile) =>
-  BaseApi.post("register", { email: email, password: password,mobile:mobile,last_name:last_name,first_name:first_name });
+  BaseApi.post("register", { email: email, password: password,mobile:mobile,last_name:last_name,first_name:first_name },{
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
 const UserForgot = (email) => BaseApi.post("forgot-password", { email: email });
 const UserForgotResetPasswordPost = (Token, new_pass, confirm_pass) =>
   BaseApi.post(

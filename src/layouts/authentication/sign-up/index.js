@@ -99,7 +99,7 @@ function Cover() {
                   onBlur={formik.handleBlur}
                   value={formik.values.first_name}
                   label="First Name"
-                  variant="standard"
+                  
                   fullWidth
                 />
                 {formik.touched.first_name && formik.errors.first_name ? (
@@ -114,7 +114,7 @@ function Cover() {
                   value={formik.values.last_name}
                   type="text"
                   label="Last Name"
-                  variant="standard"
+                  
                   fullWidth
                 />
                 {formik.touched.last_name && formik.errors.last_name ? (
@@ -129,7 +129,6 @@ function Cover() {
                   onBlur={formik.handleBlur}
                   value={formik.values.mobile}
                   label="Mobile Number"
-                  variant="standard"
                   fullWidth
                 />
                 {formik.touched.mobile && formik.errors.mobile ? (
