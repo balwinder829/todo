@@ -16,44 +16,15 @@ const CreatedToDo = (obj,token) =>
       Authorization: "Bearer " +token
     }
   });
-const UserForgot = (email) => BaseApi.post("forgot-password", { email: email });
-const UserForgotResetPasswordPost = (Token, new_pass, confirm_pass) =>
-  BaseApi.post(
-    "forgot-reset-password",
-    { new_pass: new_pass, confirm_pass: confirm_pass },
-    {
-      headers: {
-        reset_token: Token,
-      },
-    }
-  );
-const ResetPasswordPost = (old_pass, new_pass, confirm_pass) =>
-  BaseApi.post(
-    "reset-password",
-    { old_pass: old_pass, new_pass: new_pass, confirm_pass: confirm_pass },
-    {
-      headers: {
-        Authorization: localStorage.getItem("Token"),
-      },
-    }
-  );
-const UserLogout = () =>
-  BaseApi.post(
-    "/logout",
-    {},
-    {
-      headers: {
-        Authorization: localStorage.getItem("Token"),
-      },
-    }
-  );
-const GetTimezoneData = () =>
+
+const getData = (page,token) =>
   BaseApi.get(
-    "timezone",
+    `todo/list?per_page=20&page=${page}`,
     {},
     {
       headers: {
-        Authorization: localStorage.getItem("Token"),
+        'Content-Type': 'application/json',
+        Authorization: "Bearer " +token
       },
     }
   );
@@ -91,11 +62,7 @@ export default {
   UserLogin,
   Register,
   CreatedToDo,
-  UserForgot,
-  UserForgotResetPasswordPost,
-  ResetPasswordPost,
-  UserLogout,
-  GetTimezoneData,
+  getData,
   GetTimezoneregionData,
   GetTags,
   GetCountryData,

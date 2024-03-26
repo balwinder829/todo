@@ -12,15 +12,38 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 
-// Data
-import authorsTableData from "layouts/tables/data/authorsTableData";
-import projectsTableData from "layouts/tables/data/projectsTableData";
+import NewTable from "./NewTable";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "qpp/counterSlice";
+import { incrementByAmount } from "qpp/counterSlice";
+import ExportApi from "API/ExportApi";
 
 function Tables() {
-  const { columns, rows } = authorsTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
+const [Data, setData] = useState([])
+const [page, setpage] = useState(1)
+const token = useSelector((state) => state.token)
+const Dispatch =useDispatch()
+const getData =(values)=>{
+  ExportApi.getData(values,token)
+  .then((resp) => {
+    if (resp.data) {
+      console.log(resp.data)
+      if (resp.data.status == "Token is Expired") {
+        Dispatch(setUser("{}"));
+        Dispatch(incrementByAmount(""));
+    }else{
+      setData(resp.data)
+    }
+    }
+  })
+  .catch((err) => console.log(err));
+}
+
+useEffect(() => {
+  getData(1)
+}, [])
 
   return (
     <DashboardLayout>
@@ -40,44 +63,18 @@ function Tables() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                  Authors Table
+                Todo list
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
-                <DataTable
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
-            </Card>
-          </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  Projects Table
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
+                {/* <DataTable
                   table={{ columns: pColumns, rows: pRows }}
                   isSorted={false}
                   entriesPerPage={false}
                   showTotalEntries={false}
                   noEndBorder
-                />
+                /> */}
+                <NewTable getpage={getData} data={Data} />
               </MDBox>
             </Card>
           </Grid>
