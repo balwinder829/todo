@@ -16,6 +16,13 @@ const CreatedToDo = (obj,token) =>
       Authorization: "Bearer " +token
     }
   });
+const updateToDo = (obj,token) =>
+  BaseApi.post("todo/update", obj,{
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " +token
+    }
+  });
 
 const getData = (page,token) =>
   BaseApi.get(
@@ -63,6 +70,7 @@ export default {
   Register,
   CreatedToDo,
   getData,
+  updateToDo,
   GetTimezoneregionData,
   GetTags,
   GetCountryData,

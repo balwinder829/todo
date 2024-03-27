@@ -1,6 +1,7 @@
 
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
+import CreateToDo from "layouts/createtodo";
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -27,6 +28,14 @@ const routes = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/todolist",
     component: <Tables />,
+  },
+  {
+    type: "collapse",
+    name: "Create TO Do ",
+    key: "todo",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/CreateToDo",
+    component: <CreateToDo />,
   },
   // {
   //   type: "collapse",
