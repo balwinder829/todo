@@ -19,6 +19,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "qpp/counterSlice";
 import { incrementByAmount } from "qpp/counterSlice";
 import ExportApi from "API/ExportApi";
+import DndNew from "./DndNew";
+import LastDnd from "./lastDnd";
+import App from "./lastDnd";
 
 function Tables() {
 const [Data, setData] = useState([])
@@ -74,7 +77,11 @@ useEffect(() => {
                   showTotalEntries={false}
                   noEndBorder
                 /> */}
-                <NewTable getpage={getData} data={Data} />
+                {/* {Data&&
+                <DndNew getpage={getData} data={Data}/>} */}
+                {Data&&
+                <App getpage={getData} data={Data}/>}
+                {/* <NewTable getpage={getData} data={Data} /> */}
               </MDBox>
             </Card>
           </Grid>

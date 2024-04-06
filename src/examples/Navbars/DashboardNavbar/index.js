@@ -128,16 +128,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
         {isMini ? null : (
-          <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
+          <MDBox className="space-x-0.5" sx={(theme) => navbarRow(theme, { isMini })}>
+            {/* <MDBox pr={1}>
               <MDInput label="Search here" />
-            </MDBox>
-            <MDBox color={light ? "white" : "inherit"}>
-              {/* <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
-                  <Icon sx={iconsStyle}>account_circle</Icon>
-                </IconButton>
-              </Link> */}
+            </MDBox> */}
+            <MDBox   color={light ? "white" : "inherit"}>
               <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"

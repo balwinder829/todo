@@ -1,11 +1,4 @@
  
-
-/**
- * The base colors for the Material Dashboard 2 React.
- * You can add new color using this file.
- * You can customized the colors for the entire Material Dashboard 2 React using thie file.
- */
-
 const colors = {
   background: {
     default: "#f0f2f5",
@@ -189,7 +182,7 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: "#f8b3ca",
+      background: "#E8F5E9",
       text: "#cc084b",
     },
 
