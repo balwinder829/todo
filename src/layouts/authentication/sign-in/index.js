@@ -16,6 +16,7 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import logo from "assets/images/logo.jpg";
 import ExportApi from "API/ExportApi";
 import { useFormik } from "formik";
+import CircularProgress from '@mui/material/CircularProgress';
 import * as Yup from "yup";
 import MDSnackbar from "components/MDSnackbar";
 import { useDispatch } from "react-redux";
@@ -24,6 +25,7 @@ import { incrementByAmount } from "qpp/counterSlice";
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const [successSB, setSuccessSB] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [errorSB, setErrorSB] = useState(false);
   const openErrorSB = () => setErrorSB(true);
   const closeErrorSB = () => setErrorSB(false);
@@ -39,8 +41,10 @@ function Basic() {
       password: Yup.string().required("Enter your password"),
     }),
     onSubmit: (values) => {
+      setLoader(true);
       ExportApi.UserLogin(values.email,values.password)
         .then((resp) => {
+          setLoader(false);
           if (resp.data) {
             if (resp.data.success == false) {
               setErrorSB(true)
@@ -51,7 +55,10 @@ function Basic() {
             }
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err)
+          setLoader(false);
+        });
     },
   });
   const renderErrorSB = (
@@ -147,8 +154,8 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton type="submit" variant="gradient" color="info" fullWidth>
-                sign in
+              <MDButton disabled={loader} type="submit" variant="gradient" color="info" fullWidth>
+                {loader ? <CircularProgress size={20}/>  : "Sign in" }
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">

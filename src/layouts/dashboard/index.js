@@ -3,13 +3,13 @@ import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+// import Footer from "examples/Footer";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-import Projects from "layouts/dashboard/components/Projects";
+// import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -31,10 +31,12 @@ import ExportApi from "API/ExportApi";
 import { setUser } from "qpp/counterSlice";
 import { incrementByAmount } from "qpp/counterSlice";
 import MDSnackbar from "components/MDSnackbar";
+import CircularProgress from "@mui/material/CircularProgress";
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
+  const [loader, setLoader] = React.useState(false);
   const token = useSelector((state) => state.token)
   const [infoSB, setInfoSB] = useState(false);
   const openInfoSB = () => setInfoSB(true);
@@ -53,10 +55,10 @@ function Dashboard() {
     setOpen1(false);
   };
   const Dispatch =useDispatch()
-  const [successSB, setSuccessSB] = React.useState(false);
+  // const [successSB, setSuccessSB] = React.useState(false);
   const [errorSB, setErrorSB] = React.useState(false);
-  const openErrorSB = () => setErrorSB(true);
-  const closeErrorSB = () => setErrorSB(false);
+  // const openErrorSB = () => setErrorSB(true);
+  // const closeErrorSB = () => setErrorSB(false);
   const formik = useFormik({
     initialValues: {
       description: "",
@@ -66,15 +68,17 @@ function Dashboard() {
       // Status: "",
     },
     validationSchema: Yup.object({
-      description: Yup.string().required("Enter your description"),
+      description: Yup.string().required("Enter your To Do description"),
       action_date: Yup.string().required("Please select your work day"),
       title: Yup.string().required("Enter your To Do Title"),
-      tags: Yup.string().required("Please select your  Tag"),
+      tags: Yup.string().required("Please select your To Do Tag"),
       // Status: Yup.string().required("Please select your  Status"),
     }),
     onSubmit: (values,{ resetForm }) => {
+      setLoader(true);
       ExportApi.CreatedToDo(values,token)
         .then((resp) => {
+          setLoader(false);
           if (resp.data) {
             console.log(resp.data)
             if (resp.data.status == "Token is Expired") {
@@ -90,13 +94,16 @@ function Dashboard() {
           
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setLoader(false);
+          console.log(err)
+        });
     },
   });
   const renderInfoSB = (
     <MDSnackbar
       bgWhite
-      title="Todo added successfully"
+      title="To do created successfully"
       content=""
       color="success"
       icon="check"
@@ -116,7 +123,7 @@ function Dashboard() {
               <ComplexStatisticsCard
                 onClick={handleClickOpen}
                 color="dark"
-                icon="weekend"
+                icon="add"
                 title="Create To Do"
                 count={"To Do"}
                 percentage={{
@@ -215,14 +222,14 @@ function Dashboard() {
           </Grid>
         </MDBox>
         <MDBox>
-          <Grid container spacing={3}>
+          {/* <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>
               <Projects />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <OrdersOverview />
             </Grid>
-          </Grid>
+          </Grid> */}
         </MDBox>
       </MDBox>
       {/* <Footer /> */}
@@ -234,7 +241,7 @@ function Dashboard() {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle className="min-w-96" id="alert-dialog-title">
-            {" Your today plan list"}
+            Your today plan list
           </DialogTitle>
 
           <DialogContent>
@@ -258,7 +265,7 @@ function Dashboard() {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle className="min-w-96" id="alert-dialog-title">
-            {"what is your plan today ?"}
+            What is your plan today?
           </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
@@ -283,11 +290,13 @@ function Dashboard() {
                       name="action_date"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.action_date}
-                      plaseholder="kk"
+                      value={formik.values.action_date || null}
                       type="date"
                       label="Work Day"
                       fullWidth
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
                     />
                     {formik.touched.action_date && formik.errors.action_date ? (
                       <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.action_date}</div>
@@ -302,7 +311,8 @@ function Dashboard() {
                       value={formik.values.description}
                       name="description"
                       label="Description"
-                      row={5}
+                      multiline
+                      rows={4}
                       fullWidth
                     />
                     {formik.touched.description && formik.errors.description ? (
@@ -361,10 +371,10 @@ function Dashboard() {
                     ) : null}
                   </MDBox> */}
                 </MDBox>
-              <Button onClick={handleClose}>Cancel</Button>
-              <MDButton type="submit"   >
-              Create TODO
-              </MDButton>
+              <div class="flex justify-between items-center">
+                <div><MDButton type="submit" color="primary" variant="contained" size="small">{loader ? <CircularProgress size={20}/>  : "Create To Do" }</MDButton></div>  
+                <div><MDButton onClick={handleClose} color="primary" variant="contained" size="small">Cancel</MDButton></div>
+              </div>
               {/* <Button type="submit" onClick={formik.handleSubmit} autoFocus>
                 Create TODO
               </Button> */}

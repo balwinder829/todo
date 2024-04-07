@@ -3,6 +3,7 @@ import MDTypography from "components/MDTypography";
 
 import * as React from "react";
 import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -26,6 +27,7 @@ function CreateToDo() {
   const [infoSB, setInfoSB] = useState(false);
   const openInfoSB = () => setInfoSB(true);
   const closeInfoSB = () => setInfoSB(false);
+  const [loader, setLoader] = useState(false);
 
   const Dispatch = useDispatch();
 
@@ -45,8 +47,10 @@ function CreateToDo() {
       // Status: Yup.string().required("Please select your  Status"),
     }),
     onSubmit: (values, { resetForm }) => {
+      setLoader(true);
       ExportApi.CreatedToDo(values, token)
         .then((resp) => {
+          setLoader(false);
           if (resp.data) {
             console.log(resp.data);
             if (resp.data.status == "Token is Expired") {
@@ -60,7 +64,10 @@ function CreateToDo() {
             }
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setLoader(false);
+          console.log(err)
+        });
     },
   });
   const renderInfoSB = (
@@ -84,24 +91,24 @@ function CreateToDo() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox
+              {/* <MDBox
                 mx={2}
                 mt={-3}
                 py={3}
                 px={2}
                 variant="gradient"
-                bgColor="info"
+                //bgColor="info"
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography variant="h6" color="white">
+                <MDTypography variant="h6">
                   Create To Do
                 </MDTypography>
-              </MDBox>
+              </MDBox> */}
               <MDBox pt={4} pb={3} px={3}>
                 <form className="flex justify-center" onSubmit={formik.handleSubmit}>
                   <MDBox className="w-1/3 bg-gray-200 p-4 shadow-lg">
-                    <h2 style={{marginBlock:"20px"}}>what is your plan today ?</h2>
+                    <h2>What is your plan today?</h2>
                     <MDBox mb={2}>
                       <MDInput
                         type="text"
@@ -117,21 +124,43 @@ function CreateToDo() {
                       ) : null}
                     </MDBox>
                     <MDBox mb={2}>
-                      <MDInput
-                        name="action_date"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.action_date}
-                        plaseholder="kk"
-                        type="date"
-                        label="Work Day"
-                        fullWidth
-                      />
-                      {formik.touched.action_date && formik.errors.action_date ? (
-                        <div style={{ color: "red", fontSize: "15px" }}>
-                          {formik.errors.action_date}
-                        </div>
-                      ) : null}
+                    
+                        <MDInput
+                          id="date"
+                          label="Work Day"
+                          type="date"
+                          name="action_date"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.action_date || null}         
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          fullWidth
+                        />
+                        {formik.touched.action_date && formik.errors.action_date ? (
+                          <div style={{ color: "red", fontSize: "15px" }}>
+                            {formik.errors.action_date}
+                          </div>
+                        ) : null}
+                        
+                        {/* <MDInput
+                          labelId="action_label_date"
+                          name="action_date"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.action_date}
+                          // plaseholder="kk"
+                          type="date"
+                          label="Work Day"
+                          
+                        />
+                        {formik.touched.action_date && formik.errors.action_date ? (
+                          <div style={{ color: "red", fontSize: "15px" }}>
+                            {formik.errors.action_date}
+                          </div>
+                        ) : null} */}
+
                     </MDBox>
 
                     <MDBox mb={2}>
@@ -142,7 +171,8 @@ function CreateToDo() {
                         value={formik.values.description}
                         name="description"
                         label="Description"
-                        row={5}
+                        multiline
+                        rows={4}
                         fullWidth
                       />
                       {formik.touched.description && formik.errors.description ? (
@@ -176,7 +206,9 @@ function CreateToDo() {
                         <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.tags}</div>
                       ) : null}
                     </MDBox>
-                  <MDButton type="submit">Create TODO</MDButton>
+                    <MDButton className="px-8" type="submit" color="primary" size="small" variant="contained">
+                      {loader ? <CircularProgress size={20}/>  : "Create To Do" }
+                    </MDButton>
                   </MDBox>
                   {/* <Button onClick={handleClose}>Cancel</Button> */}
                   {/* <Button type="submit" onClick={formik.handleSubmit} autoFocus>
