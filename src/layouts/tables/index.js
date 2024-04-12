@@ -24,7 +24,7 @@ import LastDnd from "./lastDnd";
 import App from "./lastDnd";
 
 function Tables() {
-const [Data, setData] = useState([])
+const [Data, setData] = useState()
 const [page, setpage] = useState(1)
 const token = useSelector((state) => state.token)
 const Dispatch =useDispatch()
@@ -47,6 +47,7 @@ const getData =(values)=>{
 useEffect(() => {
   getData(1)
 }, [])
+
 
   return (
     <DashboardLayout>

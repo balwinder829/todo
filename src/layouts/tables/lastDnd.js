@@ -1,29 +1,18 @@
 import React, { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 // import uuid from "uuid/v4";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Pagination,
+} from "@mui/material";
+import EditToDo from "./EditToDo";
+import MDSnackbar from "components/MDSnackbar";
+import moment from "moment";
 
-const itemsFromBackend = [
-  { id: "1", content: "First task" },
-  { id: "2", content: "Second task" },
-  { id: "3", content: "Third task" },
-  { id: "4", content: "Fourth task" },
-  { id: "5", content: "Fifth task" },
-];
-
-const columnsFromBackend = {
-    "51": {
-      name: "To do",
-      items: itemsFromBackend,
-    },
-    "53": {
-      name: "In Progress",
-      items: [],
-    },
-    "54": {
-      name: "Done",
-      items: [],
-    },
-  };
 
 const onDragEnd = (result, columns, setColumns) => {
   if (!result.destination) return;
@@ -62,12 +51,51 @@ const onDragEnd = (result, columns, setColumns) => {
   }
 };
 
-function App() {
+function App(props) {
+  // console.log(props.data.data.data)
+  const columnsFromBackend = {
+    "51": {
+      name: "To do",
+      items: props?.data?.data?.data,
+    },
+    "53": {
+      name: "In Progress",
+      items: [],
+    },
+    "54": {
+      name: "Done",
+      items: [],
+    },
+  }
   const [columns, setColumns] = useState(columnsFromBackend);
+  const [open, setOpen] = React.useState(false);
+  const [EditData, setEditData] = useState();
+    const handleClose = () => {
+    setOpen(false);
+  };
+  const handleShow = (val) => {
+    setEditData(val);
+    setOpen(true);
+  };
+    const [infoSB, setInfoSB] = useState(false);
+  const closeInfoSB = () => setInfoSB(false);
+    const renderInfoSB = (
+    <MDSnackbar
+      bgWhite
+      title="Todo updated successfully"
+      content=""
+      color="success"
+      icon="check"
+      dateTime=""
+      open={infoSB}
+      onClose={closeInfoSB}
+      close={closeInfoSB}
+    />
+  );
   return (
     <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
       <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
-        {Object.entries(columns).map(([columnId, column], index) => {
+        {Object.entries(columns)?.map(([columnId, column], index) => {
           return (
             <div
               style={{
@@ -94,10 +122,11 @@ function App() {
                       >
                         {column.items.map((item, index) => {
                           return (
-                            <Draggable key={item.id} draggableId={item.id} index={index}>
+                            <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={index}>
                               {(provided, snapshot) => {
                                 return (
-                                  <div
+                                  <div 
+                                    onClick={()=>{handleShow(item)}}
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
@@ -111,7 +140,13 @@ function App() {
                                       ...provided.draggableProps.style,
                                     }}
                                   >
-                                    {item.content}
+                                    <p className="">{item.title}</p>
+                                    <div className="small flex justify-between">
+                                      <p className="">Tags:{item.tags}</p>
+                                    </div>
+                                    <p className="medium mt-2">{item.description}</p>
+                                      <p className="small text-end">Date:{moment(item.action_date).format('ll')}</p>
+                                    
                                   </div>
                                 );
                               }}
@@ -128,6 +163,24 @@ function App() {
           );
         })}
       </DragDropContext>
+      <Dialog
+         open={open}
+         onClose={handleClose}
+         aria-labelledby="alert-dialog-title"
+         aria-describedby="alert-dialog-description"
+       >
+         <DialogTitle className="min-w-96" id="alert-dialog-title">
+           {"Edit To Do "}
+         </DialogTitle>
+         <DialogContent>
+           <DialogContentText id="alert-dialog-description">
+             <EditToDo getpage={props.getpage} Data={EditData} setInfoSB={setInfoSB} handleClose={handleClose} />
+           </DialogContentText>
+         </DialogContent>
+         <DialogActions></DialogActions>
+       </Dialog>
+      {renderInfoSB}
+
     </div>
   );
 }

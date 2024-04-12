@@ -32,7 +32,12 @@ import { setUser } from "qpp/counterSlice";
 import { incrementByAmount } from "qpp/counterSlice";
 import MDSnackbar from "components/MDSnackbar";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 function Dashboard() {
+  const clientId = "91957916160-8q5utu0s8lh4t8vasku906vu8tuvl65f.apps.googleusercontent.com";
+  const secret = "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";
+  const [authToken, setAuthToken] = useState("");
   const { sales, tasks } = reportsLineChartData;
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
@@ -100,6 +105,41 @@ function Dashboard() {
         });
     },
   });
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      console.log({codeResponse});
+      setAuthToken(codeResponse.code);
+    },
+    flow: "auth-code",
+  });
+
+  const getToken = async () => {
+    const params = new URLSearchParams();
+    params.append("code", authToken);
+    params.append("client_id", clientId);
+    params.append("client_secret", secret);
+    params.append("redirect_uri", "http://localhost:3000");
+    params.append("grant_type", "authorization_code");
+
+    try {
+      const response = await axios.post("https://oauth2.googleapis.com/token", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+
+      console.log("response getToken", response.data);
+    } catch (error) {
+      console.error("error", error.response.data);
+    }
+  };
+
+  React.useEffect(() => {
+    if (authToken) {
+      getToken();
+    }
+  }, [authToken]);
   const renderInfoSB = (
     <MDSnackbar
       bgWhite
@@ -152,6 +192,7 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
+              onClick={login}
                 color="success"
                 icon="store"
                 title="All Work List"
