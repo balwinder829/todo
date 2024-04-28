@@ -42,7 +42,7 @@ function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [loader, setLoader] = React.useState(false);
-  const token = useSelector((state) => state.token)
+  const token = useSelector((state) => state.token);
   const [infoSB, setInfoSB] = useState(false);
   const openInfoSB = () => setInfoSB(true);
   const closeInfoSB = () => setInfoSB(false);
@@ -59,7 +59,7 @@ function Dashboard() {
   const handleClose1 = () => {
     setOpen1(false);
   };
-  const Dispatch =useDispatch()
+  const Dispatch = useDispatch();
   // const [successSB, setSuccessSB] = React.useState(false);
   const [errorSB, setErrorSB] = React.useState(false);
   // const openErrorSB = () => setErrorSB(true);
@@ -79,36 +79,35 @@ function Dashboard() {
       tags: Yup.string().required("Please select your To Do Tag"),
       // Status: Yup.string().required("Please select your  Status"),
     }),
-    onSubmit: (values,{ resetForm }) => {
+    onSubmit: (values, { resetForm }) => {
       setLoader(true);
-      ExportApi.CreatedToDo(values,token)
+      ExportApi.CreatedToDo(values, token)
         .then((resp) => {
           setLoader(false);
           if (resp.data) {
-            console.log(resp.data)
+            console.log(resp.data);
             if (resp.data.status == "Token is Expired") {
               Dispatch(setUser("{}"));
               Dispatch(incrementByAmount(""));
-          }
+            }
             if (resp.data.message == "Todo added successfully") {
-               resetForm() 
-               openInfoSB()
-               setInfoSB(true)
-               handleClose()
-        }
-          
+              resetForm();
+              openInfoSB();
+              setInfoSB(true);
+              handleClose();
+            }
           }
         })
         .catch((err) => {
           setLoader(false);
-          console.log(err)
+          console.log(err);
         });
     },
   });
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
-      console.log({codeResponse});
+      console.log({ codeResponse });
       setAuthToken(codeResponse.code);
     },
     flow: "auth-code",
@@ -192,10 +191,10 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-              onClick={login}
+                onClick={login}
                 color="success"
                 icon="store"
-                title="All Work List"
+                title="Gmail Authentication"
                 count="34k"
                 percentage={{
                   color: "success",
@@ -308,8 +307,8 @@ function Dashboard() {
           <DialogTitle className="min-w-96" id="alert-dialog-title">
             What is your plan today?
           </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
               <form onSubmit={formik.handleSubmit}>
                 <MDBox>
                   <MDBox mb={2}>
@@ -340,7 +339,9 @@ function Dashboard() {
                       }}
                     />
                     {formik.touched.action_date && formik.errors.action_date ? (
-                      <div style={{ color: "red", fontSize: "15px" }}>{formik.errors.action_date}</div>
+                      <div style={{ color: "red", fontSize: "15px" }}>
+                        {formik.errors.action_date}
+                      </div>
                     ) : null}
                   </MDBox>
 
@@ -363,10 +364,10 @@ function Dashboard() {
                     ) : null}
                   </MDBox>
                   <MDBox mb={2}>
-                    <FormControl  fullWidth>
+                    <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">Tag</InputLabel>
                       <Select
-                      sx={{height:45 }}
+                        sx={{ height: 45 }}
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         onChange={formik.handleChange}
@@ -412,18 +413,30 @@ function Dashboard() {
                     ) : null}
                   </MDBox> */}
                 </MDBox>
-              <div class="flex justify-between items-center">
-                <div><MDButton type="submit" color="primary" variant="contained" size="small">{loader ? <CircularProgress size={20}/>  : "Create To Do" }</MDButton></div>  
-                <div><MDButton onClick={handleClose} color="primary" variant="contained" size="small">Cancel</MDButton></div>
-              </div>
-              {/* <Button type="submit" onClick={formik.handleSubmit} autoFocus>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <MDButton type="submit" color="primary" variant="contained" size="small">
+                      {loader ? <CircularProgress size={20} /> : "Create To Do"}
+                    </MDButton>
+                  </div>
+                  <div>
+                    <MDButton
+                      onClick={handleClose}
+                      color="primary"
+                      variant="contained"
+                      size="small"
+                    >
+                      Cancel
+                    </MDButton>
+                  </div>
+                </div>
+                {/* <Button type="submit" onClick={formik.handleSubmit} autoFocus>
                 Create TODO
               </Button> */}
-          </form>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-            </DialogActions>
+              </form>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions></DialogActions>
         </Dialog>
       </React.Fragment>
       {renderInfoSB}

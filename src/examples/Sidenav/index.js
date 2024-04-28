@@ -1,7 +1,13 @@
  
 
-import { useEffect } from "react";
-
+import React ,{ useEffect, useState } from "react";
+import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
 
@@ -33,13 +39,18 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
-
+import { useGoogleLogin } from "@react-oauth/google"
+import Settings from "layouts/setting/Settings";
+import Grid from '@mui/material/Grid';
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
+  const clientId = "91957916160-8q5utu0s8lh4t8vasku906vu8tuvl65f.apps.googleusercontent.com";
+  const secret = "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";
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
   const location = useLocation();
+  const [authToken, setAuthToken] = useState("");
   const collapseName = location.pathname.replace("/", "");
-
+  const [open1, setOpen1] = React.useState(false);
   let textColor = "white";
 
   if (transparentSidenav || (whiteSidenav && !darkMode)) {
@@ -47,9 +58,44 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   } else if (whiteSidenav && darkMode) {
     textColor = "inherit";
   }
-
+  const handleClose1 = () => {
+    setOpen1(!open1);
+  };
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      console.log({ codeResponse });
+      setAuthToken(codeResponse.code);
+    },
+    flow: "auth-code",
+  });
 
+  const getToken = async () => {
+    const params = new URLSearchParams();
+    params.append("code", authToken);
+    params.append("client_id", clientId);
+    params.append("client_secret", secret);
+    params.append("redirect_uri", "http://localhost:3000");
+    params.append("grant_type", "authorization_code");
+
+    try {
+      const response = await axios.post("https://oauth2.googleapis.com/token", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+
+      console.log("response getToken", response.data);
+    } catch (error) {
+      // console.error("error", error.response.data);
+    }
+  };
+
+  React.useEffect(() => {
+    if (authToken) {
+      getToken();
+    }
+  }, [authToken]);
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
@@ -90,9 +136,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             noCollapse={noCollapse}
           />
         </Link>
+
       ) : (
         <NavLink key={key} to={route}>
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
+          {key=="Gmail"? <SidenavCollapse onClick={login} name={name} icon={icon} active={key === collapseName} />:key=="Settings"? <SidenavCollapse onClick={handleClose1} name={name} icon={icon} active={key === collapseName} />: <SidenavCollapse name={name} icon={icon} active={key === collapseName} />}
+          {/* <SidenavCollapse name={name} icon={icon} active={key === collapseName} /> */}
         </NavLink>
       );
     } else if (type === "title") {
@@ -169,6 +217,30 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       <MDBox p={2} mt="auto">
 
       </MDBox>
+      <Dialog
+          open={open1}
+          onClose={handleClose1}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle className="min-w-96" id="alert-dialog-title">
+            Settings
+          </DialogTitle>
+
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <Grid item xs={12} md={6} lg={4}>
+                <Settings />
+              </Grid>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose1}>Close</Button>
+            {/* <Button onClick={handleClose1} autoFocus>
+              Done
+            </Button> */}
+          </DialogActions>
+        </Dialog>
     </SidenavRoot>
   );
 }

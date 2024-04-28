@@ -37,6 +37,22 @@ const routes = [
     route: "/CreateToDo",
     component: <CreateToDo />,
   },
+  {
+    type: "collapse",
+    name: "Gmail Authentication",
+    key: "Gmail",
+    icon: <Icon fontSize="small">Gmail</Icon>,
+    route: "#",
+    // component: < />,
+  },
+  {
+    type: "collapse",
+    name: "Settings",
+    key: "Settings",
+    icon: <Icon fontSize="small">Settings</Icon>,
+    route: "#",
+    // component: < />,
+  },
   // {
   //   type: "collapse",
   //   name: "Billing",
