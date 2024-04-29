@@ -34,6 +34,8 @@ import MDSnackbar from "components/MDSnackbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import getAuthToken from "../../API/ExportApi"
+
 function Dashboard() {
   const clientId = "91957916160-8q5utu0s8lh4t8vasku906vu8tuvl65f.apps.googleusercontent.com";
   const secret = "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";
@@ -109,7 +111,9 @@ function Dashboard() {
     onSuccess: (codeResponse) => {
       console.log({ codeResponse });
       setAuthToken(codeResponse.code);
+      getAuthToken({code:codeResponse.code}, token)
     },
+    accessType: 'offline',
     flow: "auth-code",
   });
 

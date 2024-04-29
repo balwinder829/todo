@@ -27,6 +27,7 @@ import MDButton from "components/MDButton";
 
 //  T0 Do React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
+import getAuthToken from "../../API/ExportApi"
 
 // Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
@@ -42,12 +43,17 @@ import {
 import { useGoogleLogin } from "@react-oauth/google"
 import Settings from "layouts/setting/Settings";
 import Grid from '@mui/material/Grid';
+import { useSelector } from "react-redux";
+import ExportApi from "../../API/ExportApi";
+
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const clientId = "91957916160-8q5utu0s8lh4t8vasku906vu8tuvl65f.apps.googleusercontent.com";
   const secret = "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";
   const [controller, dispatch] = useMaterialUIController();
+  const token = useSelector((state) => state.token);
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
   const location = useLocation();
+
   const [authToken, setAuthToken] = useState("");
   const collapseName = location.pathname.replace("/", "");
   const [open1, setOpen1] = React.useState(false);
@@ -66,7 +72,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     onSuccess: (codeResponse) => {
       console.log({ codeResponse });
       setAuthToken(codeResponse.code);
+      ExportApi.getAuthToken({code:codeResponse.code}, token)
     },
+    accessType: 'offline',
     flow: "auth-code",
   });
 
